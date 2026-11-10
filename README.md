@@ -27,9 +27,13 @@ Ouvre ensuite `http://127.0.0.1:5050/` dans ton navigateur, ou l'adresse indiqu�
 
 ## ⚠️ Informations importantes
 
-Ivoire fonctionne localement et ne nécessite aucun compte ni connexion à un serveur distant. Les partitions personnelles, les favoris et la progression sont enregistrés dans le navigateur.
+Ivoire fonctionne localement et ne nécessite aucun compte ni service distant.
 
-Ces données peuvent être perdues si tu effaces les données du navigateur ou changes de profil. Le projet ne contient aucune bibliothèque de morceaux personnels, mais propose une démonstration intégrée.
+Chaque utilisateur peut ajouter, modifier et conserver ses propres partitions en AZERTY ou QWERTY. Les partitions personnelles, les favoris et la progression sont enregistrés directement dans son navigateur, sans être partagés avec les autres utilisateurs.
+
+Ces données peuvent être perdues si tu effaces les données du navigateur ou changes de profil. Pour retrouver tes partitions, utilise le même navigateur et la même adresse locale.
+
+Le projet ne contient aucune bibliothèque de morceaux personnels, mais propose une démonstration intégrée.
 
 ## 📄 Licence
 
