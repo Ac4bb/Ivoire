@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="js/interface/theme-init.js"></script>
+<title>Ivoire | Bl4ck</title>
+<link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16.png?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicon-192.png?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="errorBanner" style="display:none;position:sticky;top:0;z-index:999;background:#c25b4a;color:#fff;padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;white-space:pre-wrap;"></div>
+<script src="js/interface/errors.js"></script>
+<div class="wrap">
+  <header>
+    <div class="title-row">
+      <div class="header-brand">
+        <img class="header-logo" src="assets/images/guts_175.webp" width="280" height="280" alt="">
+        <h1 class="header-wordmark">IV<span>OI</span>RE</h1>
+      </div>
+      <label class="theme-control" for="themeSelect">Thème
+        <select id="themeSelect">
+          <option value="default">Défaut</option>
+          <option value="dark">Sombre</option>
+          <option value="light">Clair</option>
+        </select>
+      </label>
+    </div>
+    <script src="js/interface/theme.js"></script>
+  </header>
+
+  <div class="compact-toolbar">
+    <div class="tabs" style="margin:0;">
+      <div class="tab active" data-mode="free">Jeu libre</div>
+      <div class="tab" data-mode="practice">Entraînement</div>
+    </div>
+    <button id="soundToggle" class="btn-ghost" title="Activer/désactiver le son">🔊 Son</button>
+    <details class="compact-options">
+    <summary>Réglages piano</summary>
+    <div class="options-content">
+    <select id="instrumentSelect" title="Choisir le type de piano" style="width:auto;">
+      <option value="salamander">🎹 Salamander Grand</option>
+      <option value="old">🕰️ Old Piano</option>
+    </select>
+    <button id="metroToggle" class="btn-ghost" title="Activer/désactiver le métronome">🎵 Métronome</button>
+    <label style="font-size:13px;color:var(--ivory-dim);display:flex;align-items:center;gap:6px;white-space:nowrap;" title="Décale toutes les notes de X demi-tons (négatif = plus grave, positif = plus aigu)">
+      Transposition
+      <input type="number" id="transposeInput" value="0" min="-24" max="24" step="1" style="width:64px;">
+    </label>
+    <label for="metroBpm" style="font-size:13px;color:var(--ivory-dim);display:flex;align-items:center;gap:6px;white-space:nowrap;" title="Tempo du métronome">
+      BPM
+      <input type="number" id="metroBpm" value="90" min="30" max="240" step="1" style="width:64px;">
+    </label>
+    </div>
+    </details>
+  </div>
+  <div id="audioStatus" role="status" style="font-size:12px;color:var(--brass);opacity:.9;margin:0 0 14px;min-height:16px;"></div>
+
+  <div class="card">
+    <h2>Clavier <span class="hint" id="modeHint">appuie sur tes touches pour jouer</span></h2>
+    <div class="piano" id="piano"></div>
+  </div>
+  <div class="card" id="practicePanel" style="display:none;">
+    <h2>Morceau
+      <span class="hint"><span id="songProgress">—</span></span>
+    </h2>
+    <div class="song-picker">
+      <select id="songSelect" style="flex:1;"></select>
+      <details class="compact-options" id="songOptions">
+        <summary>Options</summary>
+        <div class="options-content" id="songOptionsContent"></div>
+      </details>
+    </div>
+    <div class="row playback-toolbar" style="margin-bottom:12px;">
+      <button class="btn-ghost" id="playDemo">▶ Écouter</button>
+      <button class="btn-ghost" id="pausePlayback" title="Mettre la lecture active en pause">⏸ Pause</button>
+      <button class="btn-ghost" id="stopPlayback" title="Arrêter la lecture active et revenir au début">⏹ Stop</button>
+      <button class="btn-ghost" id="restartSong">Redémarrer</button>
+      <button class="btn-ghost" id="favoriteSong" title="Ajouter/retirer des favoris">☆ Favori</button>
+      <button class="btn-ghost" id="renameSong" title="Modifier le titre et/ou la partition de ce morceau">✏️ Modifier</button>
+      <button class="btn-ghost" id="deleteSong">Supprimer</button>
+      <button class="btn-ghost" id="importLegacy">Importer des données locales</button>
+      <input type="file" id="legacyFiles" accept=".txt,.json" multiple hidden>
+    </div>
+    <script src="js/interface/song-options.js"></script>
+    <div id="songMeta" class="row" style="margin-bottom:12px;gap:8px;"></div>
+    <div class="row" style="margin-bottom:12px;align-items:center;gap:10px;">
+      <label for="demoSpeed" style="font-size:13px;color:var(--ivory-dim);white-space:nowrap;">Vitesse d'écoute</label>
+      <input type="range" id="demoSpeed" min="0.5" max="2.5" step="0.1" value="1" style="flex:1;">
+      <span id="demoSpeedLabel" style="font-size:13px;color:var(--brass);min-width:38px;">1.0x</span>
+      <label for="masterVolume" style="font-size:13px;color:var(--ivory-dim);white-space:nowrap;margin-left:14px;">🔊 Volume</label>
+      <input type="range" id="masterVolume" min="0" max="1" step="0.05" value="0.5" style="width:130px;">
+      <span id="masterVolumeLabel" style="font-size:13px;color:var(--brass);min-width:38px;">50%</span>
+    </div>
+    <div class="stream" id="stream">Choisis ou ajoute un morceau ci-dessous ⬇</div>
+    <label for="newTitle">Ajouter un morceau</label>
+    <input type="text" id="newTitle" placeholder="Titre du morceau">
+    <label for="newNotationFormat">Format de la partition</label>
+    <select id="newNotationFormat">
+      <option value="azerty">AZERTY</option>
+      <option value="qwerty">QWERTY</option>
+    </select>
+    <textarea id="newNotation" aria-label="Notation de la partition" placeholder="Colle ici les lettres/chiffres de la partition..." style="margin-top:8px;"></textarea>
+    <div class="row row-end">
+      <span id="addStatus" style="font-size:12.5px;"></span>
+      <button class="btn-brass" id="addSong">Enregistrer le morceau</button>
+    </div>
+    <p class="note">Les crochets <code>[as]</code> désignent un accord : presse toutes les touches à l'intérieur en même temps (l'ordre n'a pas d'importance).</p>
+  </div>
+
+  <div class="card">
+    <h2>Statistiques de session</h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">TOUCHES JOUÉES</div></div>
+      <div class="stat"><div class="n" id="statCorrect">0</div><div class="l">CORRECTES</div></div>
+      <div class="stat"><div class="n" id="statWrong">0</div><div class="l">ERREURS</div></div>
+      <div class="stat"><div class="n" id="statAcc">—</div><div class="l">PRÉCISION</div></div>
+    </div>
+    <div class="keylist" id="keyBreakdown"></div>
+  </div>
+
+  <footer>
+    Les morceaux que tu ajoutes sont sauvegardés pour toi et te suivront à ta prochaine visite.
+    <p class="footer-signature">Ivoire © 2026 <span>Bl4ck</span></p>
+  </footer>
+</div>
+
+<script src="js/keyboard.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/notation.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/training-controls.js"></script>
+<script src="js/songs.js"></script>
+<script src="js/training.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
